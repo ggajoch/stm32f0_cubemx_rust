@@ -1,0 +1,13 @@
+[package]
+authors = ["Grzegorz Gajoch <gajoch@gmail.com>"]
+edition = "2018"
+readme = "README.md"
+name = "stm32f0_cubemx_rust"
+version = "0.1.0"
+
+[dependencies]
+panic-semihosting = "0.5.3"
+
+[lib]
+name = "test1"
+crate-type = ["staticlib"]

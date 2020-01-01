@@ -14,11 +14,17 @@
 # target
 ######################################
 TARGET = stm32f0_cubemx_rust
-
+RUST_SOURCE = ./src-rust
+RUST_NAME = test1
+TARGET = stm32f0_cubemx_rust
+RUST_CPU_TARGET = thumbv6m-none-eabi
 
 ######################################
 # building variables
 ######################################
+RUST_LIBRARY_FOLDER = $(RUST_SOURCE)/target/$(RUST_CPU_TARGET)/release/
+RUST_LIBRARY = $(RUST_LIBRARY_FOLDER)/lib$(RUST_NAME).a
+
 # debug build?
 DEBUG = 1
 # optimization
@@ -140,8 +146,8 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 LDSCRIPT = STM32F051R8Tx_FLASH.ld
 
 # libraries
-LIBS = -lc -lm -lnosys 
-LIBDIR = 
+LIBS = -lnosys -l$(RUST_NAME)
+LIBDIR = -L$(RUST_LIBRARY_FOLDER)
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
@@ -164,7 +170,7 @@ $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
+$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile rust
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
 
@@ -189,3 +195,17 @@ clean:
 -include $(wildcard $(BUILD_DIR)/*.d)
 
 # *** EOF ***
+
+######################################
+# rust target
+######################################
+$(RUST_LIBRARY):
+	cd $(RUST_SOURCE); cargo build --release
+
+rust: $(RUST_LIBRARY)
+
+gdb:
+	arm-none-eabi-gdb -q build/stm32f0_cubemx_rust.elf
+
+flash: $(BUILD_DIR)/$(TARGET).elf
+	arm-none-eabi-gdb -q build/stm32f0_cubemx_rust.elf

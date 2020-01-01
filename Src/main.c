@@ -55,7 +55,19 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void rust_main();
 
+void cxx_delay(uint32_t ms) {
+  HAL_Delay(ms);
+}
+
+void cxx_led_on(void) {
+  HAL_GPIO_WritePin(GPIOC, LD4_Pin|LD3_Pin, GPIO_PIN_SET);
+}
+
+void cxx_led_off(void) {
+  HAL_GPIO_WritePin(GPIOC, LD4_Pin|LD3_Pin, GPIO_PIN_RESET);
+}
 /* USER CODE END 0 */
 
 /**
@@ -88,7 +100,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  rust_main();
   /* USER CODE END 2 */
 
   /* Infinite loop */
