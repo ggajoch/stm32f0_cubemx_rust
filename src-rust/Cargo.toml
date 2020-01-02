@@ -7,6 +7,12 @@ version = "0.1.0"
 
 [dependencies]
 panic-semihosting = "0.5.3"
+cfg-if = "0.1.10"
+
+[dev-dependencies.mockall]
+version = "0.6.0"
+features = ["nightly"]
+
 
 [lib]
 name = "test1"
